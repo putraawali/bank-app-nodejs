@@ -19,16 +19,15 @@ A simple banking application built with **Node.js** and **PostgreSQL**, supporti
 
 ## 🛠️ Tech Stack
 
-| Layer        | Stack                           |
-| ------------ | ------------------------------- |
-| Runtime      | Node.js                         |
-| Database     | PostgreSQL                      |
-| ORM          | Sequelize                       |
-| Validation   | Custom & Sequelize native       |
-| Hashing      | bcrypt / crypto                 |
-| Format Money | decimal.js (recommended)        |
-| Architecture | MVC + DI (Dependency Injection) |
-| Folder Style | Clean Architecture              |
+| Layer        | Stack                     |
+| ------------ | ------------------------- |
+| Runtime      | Node.js                   |
+| Database     | PostgreSQL                |
+| ORM          | Sequelize                 |
+| Validation   | Custom & Sequelize native |
+| Hashing      | bcrypt / crypto           |
+| Format Money | decimal.js (recommended)  |
+| Architecture | Clean Architecture        |
 
 ---
 
@@ -42,6 +41,7 @@ BANK-APP-NODEJS/
 │   ├── handlers/         # HTTP route handlers (controllers)
 │   ├── models/           # Sequelize models
 │   ├── repositories/     # Database access abstraction layer
+│   ├── router/           # HTTP Router
 │   ├── usecases/         # Business logic (e.g. register, transfer)
 │   └── utils/            # Helper functions (hashing, money, etc)
 ├── app.js                # Express app
@@ -55,13 +55,13 @@ BANK-APP-NODEJS/
 
 ## 🧪 Available Endpoints (Sample)
 
-| Method | Endpoint    | Description                 |
-| ------ | ----------- | --------------------------- |
-| POST   | `/register` | Register new user + account |
-| POST   | `/login`    | Authenticate user           |
-| POST   | `/deposit`  | Deposit to account          |
-| POST   | `/withdraw` | Withdraw from account       |
-| POST   | `/transfer` | Transfer to other account   |
+| Method | Endpoint            | Description                 |
+| ------ | ------------------- | --------------------------- |
+| POST   | `/user/register`    | Register new user + account |
+| POST   | `/user/login`       | Authenticate user           |
+| POST   | `/account/deposit`  | Deposit to account          |
+| POST   | `/account/withdraw` | Withdraw from account       |
+| POST   | `/account/transfer` | Transfer to other account   |
 
 _All transactions use Sequelize `transaction()` to prevent race conditions._
 
@@ -78,7 +78,7 @@ _All transactions use Sequelize `transaction()` to prevent race conditions._
 
 ```bash
 # Clone repo
-git clone https://github.com/your-username/bank-app-nodejs.git
+git clone https://github.com/putraawali/bank-app-nodejs.git
 cd bank-app-nodejs
 
 # Install dependencies
