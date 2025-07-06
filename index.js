@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const { db } = require("./src/connections/pg");
-const { createApp } = require("./src/app");
+const { App } = require("./src/app");
 const PORT = process.env.APP_PORT || 3000;
 
 (async () => {
@@ -9,7 +9,10 @@ const PORT = process.env.APP_PORT || 3000;
         await db.authenticate();
         console.log("Postgres Connected Successfully");
 
-        const { app } = createApp({ db });
+        // const { app } = createApp({ db });
+
+        const apps = new App({ db });
+        const app = apps.getApp();
 
         app.listen(PORT, () => {
             console.log("Server running on port:", PORT);

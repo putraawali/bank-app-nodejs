@@ -1,24 +1,32 @@
 const express = require("express");
 const { Repository } = require("./repositories");
-const { User, Account, Transaction } = require("./models");
-const { UserUsecase } = require("./usecases/user_usecase");
 const { Usecase } = require("./usecases");
-const { UserHandler } = require("./handlers/user_handler");
 const { UserRouter } = require("./router/user_router");
 
-function createApp({ db }) {
-    const app = express();
-    app.use(express.json());
+class App {
+    #app;
+    constructor({ db }) {
+        this.registerApp(db);
+    }
 
-    const userRouter = new UserRouter({
-        usecases: new Usecase({
-            repository: new Repository({ db }),
-        }),
-    });
+    registerApp(db) {
+        const app = express();
+        app.use(express.json());
 
-    app.use("/user", userRouter.getRouter());
+        const userRouter = new UserRouter({
+            usecases: new Usecase({
+                repository: new Repository({ db }),
+            }),
+        });
 
-    return { app };
+        app.use("/user", userRouter.getRouter());
+
+        this.#app = app;
+    }
+
+    getApp() {
+        return this.#app;
+    }
 }
 
-module.exports = { createApp };
+module.exports = { createApp, App };
