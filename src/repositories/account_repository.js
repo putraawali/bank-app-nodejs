@@ -28,8 +28,8 @@ class AccountRepository {
     async findOne(conditions) {
         let where = {};
 
-        if (conditions.account_number) {
-            where["account_number"] = conditions.account_number;
+        if (conditions.user_id) {
+            where["user_id"] = conditions.user_id;
         }
 
         return this.#accountModel.findOne({ where });

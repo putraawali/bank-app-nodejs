@@ -21,6 +21,10 @@ class UserRepository {
             where["email"] = conditions.email;
         }
 
+        if (conditions.user_id) {
+            where["user_id"] = conditions.user_id;
+        }
+
         return this.#userModel.findOne({ where });
     }
 }

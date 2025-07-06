@@ -37,6 +37,19 @@ class UserHandler {
             });
         }
     };
+
+    getDetail = async (req, res) => {
+        try {
+            let user = req.userData;
+            const result = await this.usecases.userUsecase.getDetail(user);
+            res.status(200).json({ message: result, code: 200 });
+        } catch (error) {
+            res.status(500).json({
+                error: error,
+                code: 500,
+            });
+        }
+    };
 }
 
 module.exports = { UserHandler };

@@ -1,5 +1,6 @@
 const express = require("express");
 const { UserHandler } = require("../handlers/user_handler");
+const { Middleware } = require("../middlewares/middleware");
 
 class UserRouter {
     userHandler;
@@ -15,6 +16,7 @@ class UserRouter {
     registerRouter() {
         this.#router.post("/register", this.userHandler.register);
         this.#router.post("/login", this.userHandler.login);
+        this.#router.get("", this.userHandler.getDetail);
     }
 
     getRouter() {

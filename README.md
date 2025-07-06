@@ -43,8 +43,8 @@ BANK-APP-NODEJS/
 │   ├── repositories/     # Database access abstraction layer
 │   ├── router/           # HTTP Router
 │   ├── usecases/         # Business logic (e.g. register, transfer)
-│   └── utils/            # Helper functions (hashing, money, etc)
-├── app.js                # Express app
+│   ├── utils/            # Helper functions (hashing, money, etc)
+│   └── app.js            # Express app
 ├── index.js              # Entry point (starts the server)
 ├── .env                  # Environment variables
 ├── package.json

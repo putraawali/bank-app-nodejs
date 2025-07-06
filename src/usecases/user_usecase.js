@@ -1,3 +1,4 @@
+const Decimal = require("decimal.js");
 const { Repository } = require("../repositories");
 const { Bcrypt } = require("../utils/bcrypt");
 const { JWT } = require("../utils/jwt");
@@ -80,6 +81,33 @@ class UserUsecase {
                     user_id: +user.dataValues.user_id,
                     email: user.dataValues.email,
                 }),
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getDetail(data) {
+        try {
+            let user = await this.#repository.userRepository.findOne({
+                email: data.email,
+            });
+
+            if (!user) {
+                throw "Invalid user";
+            }
+
+            let account = await this.#repository.accountRepository.findOne({
+                user_id: data.user_id,
+            });
+
+            if (!account) {
+                throw "No account found";
+            }
+
+            return {
+                email: data.email,
+                balance: new Decimal(account.dataValues.balance),
             };
         } catch (error) {
             throw error;

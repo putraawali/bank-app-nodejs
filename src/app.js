@@ -2,6 +2,7 @@ const express = require("express");
 const { Repository } = require("./repositories");
 const { Usecase } = require("./usecases");
 const { UserRouter } = require("./router/user_router");
+const { Middleware } = require("./middlewares/middleware");
 
 class App {
     #app;
@@ -19,7 +20,8 @@ class App {
             }),
         });
 
-        app.use("/user", userRouter.getRouter());
+        // app.use("/user", userRouter.getRouter());
+        app.use("/user", Middleware.authentication, userRouter.getRouter());
 
         this.#app = app;
     }
@@ -29,4 +31,4 @@ class App {
     }
 }
 
-module.exports = { createApp, App };
+module.exports = { App };
