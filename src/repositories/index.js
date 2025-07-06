@@ -1,3 +1,4 @@
+const { User, Account, Transaction } = require("../models");
 const { AccountRepository } = require("./account_repository");
 const { TransactionRepository } = require("./transaction_repository");
 const { UserRepository } = require("./user_repositoriy");
@@ -9,12 +10,19 @@ class Repository {
     #models;
     #db;
 
-    constructor(models, db) {
+    constructor({ db }) {
+        const models = {
+            user: User,
+            account: Account,
+            transaction: Transaction,
+        };
+
         this.userRepository = new UserRepository(models.user);
         this.accountRepository = new AccountRepository(models.account);
         this.transactionRepository = new TransactionRepository(
             models.transaction
         );
+
         this.#models = models;
         this.#db = db;
     }
@@ -43,7 +51,7 @@ class Repository {
         };
 
         try {
-            const result = await fn(tempRepo, tx);
+            const result = await fn(tempRepo);
             await tx.commit();
             return result;
         } catch (error) {
@@ -51,6 +59,14 @@ class Repository {
             console.log(error.message);
             throw error.message;
         }
+    }
+
+    getModel() {
+        return this.#models;
+    }
+
+    getDb() {
+        return this.#db;
     }
 }
 

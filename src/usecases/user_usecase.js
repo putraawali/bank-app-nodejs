@@ -7,16 +7,16 @@ class UserUsecase {
     #repository;
     #db;
 
-    constructor({ models, db, repository }) {
-        this.#models = models;
+    constructor({ repository }) {
+        this.#models = repository.getModel();
         this.#repository = repository;
-        this.#db = db;
+        this.#db = repository.getDb();
     }
 
     async register(data) {
         try {
-            const repo = new Repository(this.#models, this.#db);
-            const result = await repo.withTransaction(async (repos, _) => {
+            const repo = new Repository({ db: this.#db });
+            const result = await repo.withTransaction(async (repos) => {
                 const user = await repos.userRepository.createUser({
                     email: data.email,
                     password: data.password,

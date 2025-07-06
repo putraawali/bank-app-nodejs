@@ -1,10 +1,11 @@
 const express = require("express");
+const { UserHandler } = require("../handlers/user_handler");
 
 class UserRouter {
     userHandler;
     #router;
-    constructor({ userHandler }) {
-        this.userHandler = userHandler;
+    constructor({ usecases }) {
+        this.userHandler = new UserHandler({ usecases });
         this.#router = express.Router();
 
         // Register router when instance created

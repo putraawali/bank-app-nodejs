@@ -10,22 +10,10 @@ function createApp({ db }) {
     const app = express();
     app.use(express.json());
 
-    const models = {
-        user: User,
-        account: Account,
-        transaction: Transaction,
-    };
-
-    const repository = new Repository(models);
-
-    const usecases = {
-        user: new UserUsecase({ models, db, repository }),
-    };
-
-    const usecase = new Usecase(usecases);
-
     const userRouter = new UserRouter({
-        userHandler: new UserHandler(usecase),
+        usecases: new Usecase({
+            repository: new Repository({ db }),
+        }),
     });
 
     app.use("/user", userRouter.getRouter());

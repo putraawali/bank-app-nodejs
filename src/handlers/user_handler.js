@@ -1,6 +1,6 @@
 class UserHandler {
     usecases;
-    constructor(usecases) {
+    constructor({ usecases }) {
         this.usecases = usecases;
     }
 
