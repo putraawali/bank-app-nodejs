@@ -2,6 +2,7 @@ const Decimal = require("decimal.js");
 const { Repository } = require("../repositories");
 const { Bcrypt } = require("../utils/bcrypt");
 const { JWT } = require("../utils/jwt");
+const { Response } = require("../utils/response");
 
 class UserUsecase {
     #models;
@@ -16,8 +17,19 @@ class UserUsecase {
 
     async register(data) {
         try {
+            const foundUser = await this.#repository.userRepository.findOne({
+                email: data.email,
+            });
+            if (foundUser !== null) {
+                throw new Response({
+                    code: 400,
+                    error: "Email already exists",
+                    detail: "Email " + data.email + " already registered",
+                });
+            }
+
             const repo = new Repository({ db: this.#db });
-            const result = await repo.withTransaction(async (repos) => {
+            await repo.withTransaction(async (repos) => {
                 const user = await repos.userRepository.createUser({
                     email: data.email,
                     password: data.password,
@@ -25,6 +37,7 @@ class UserUsecase {
 
                 let accountNumber;
                 let isUnique = false;
+                let counter = 0;
 
                 while (!isUnique) {
                     accountNumber =
@@ -37,6 +50,15 @@ class UserUsecase {
 
                     if (!exist) {
                         isUnique = true;
+                    } else {
+                        counter++;
+                        if (counter === 5) {
+                            throw new Response({
+                                code: 500,
+                                error: "Unable to generate account number",
+                                detail: "Unable to generate account number",
+                            });
+                        }
                     }
                 }
 
@@ -46,18 +68,26 @@ class UserUsecase {
                     pin: data.pin,
                 });
 
-                const result = {
-                    user_id: +user.dataValues.user_id,
-                    email: data.email,
-                    account_number: accountNumber,
-                };
-
-                return result;
+                return;
             });
 
-            return result;
+            return new Response({ code: 201 });
         } catch (error) {
-            throw error;
+            if (error instanceof Response) {
+                next(error);
+            }
+
+            let msg = "Internal server error";
+            let detail = error;
+            let code = 500;
+
+            if (error.startsWith("Validation error: ")) {
+                msg = error.split("Validation error: ")[1];
+                code = 400;
+            }
+
+            const response = new Response({ code, error: msg, detail });
+            next(response);
         }
     }
 
@@ -68,22 +98,41 @@ class UserUsecase {
             });
 
             if (!user) {
-                throw "User with email " + data.email + " not found";
+                throw new Response({
+                    code: 400,
+                    error: "Email not found",
+                    detail: "User with email " + data.email + " not found",
+                });
             }
 
             if (!Bcrypt.compare(data.password, user.dataValues.password)) {
-                throw "Invalid Password";
+                throw new Response({
+                    code: 400,
+                    error: "Ivalid password",
+                    detail: "Wrong password",
+                });
             }
 
             const jwt = new JWT();
-            return {
-                access_token: jwt.generate({
-                    user_id: +user.dataValues.user_id,
-                    email: user.dataValues.email,
-                }),
-            };
+            return new Response({
+                code: 200,
+                data: {
+                    access_token: jwt.generate({
+                        user_id: +user.dataValues.user_id,
+                        email: user.dataValues.email,
+                    }),
+                },
+            });
         } catch (error) {
-            throw error;
+            if (error instanceof Response) {
+                throw error;
+            }
+
+            let msg = "Internal server error";
+            let detail = error;
+            let code = 500;
+
+            throw new Response({ code, error: msg, detail });
         }
     }
 
@@ -94,7 +143,11 @@ class UserUsecase {
             });
 
             if (!user) {
-                throw "Invalid user";
+                throw new Response({
+                    code: 404,
+                    error: "Invalid user",
+                    detail: "User not found",
+                });
             }
 
             let account = await this.#repository.accountRepository.findOne({
@@ -102,15 +155,22 @@ class UserUsecase {
             });
 
             if (!account) {
-                throw "No account found";
+                throw new Response({
+                    code: 404,
+                    error: "No account found",
+                    detail: "No account found",
+                });
             }
 
-            return {
-                email: data.email,
-                balance: new Decimal(account.dataValues.balance),
-            };
+            return new Response({
+                code: 200,
+                data: {
+                    email: data.email,
+                    balance: new Decimal(account.dataValues.balance),
+                },
+            });
         } catch (error) {
-            throw error;
+            next(error);
         }
     }
 }

@@ -3,6 +3,7 @@ const { Repository } = require("./repositories");
 const { Usecase } = require("./usecases");
 const { UserRouter } = require("./router/user_router");
 const { Middleware } = require("./middlewares/middleware");
+const { Response } = require("./utils/response");
 
 class App {
     #app;
@@ -20,9 +21,21 @@ class App {
             }),
         });
 
-        // app.use("/user", userRouter.getRouter());
         app.use("/user", Middleware.authentication, userRouter.getRouter());
 
+        // Error handler
+        app.use((err, req, res, next) => {
+            if (err instanceof Response) {
+                return res.status(err.code).json(err.send());
+            }
+
+            const response = new Response({
+                code: 500,
+                error: "Internal server error",
+                detail: err,
+            });
+            return res.status(response.code).json(response.send());
+        });
         this.#app = app;
     }
 

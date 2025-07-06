@@ -5,7 +5,7 @@ class UserHandler {
     }
 
     // Using arrow function to automate binding 'this'
-    register = async (req, res) => {
+    register = async (req, res, next) => {
         try {
             let { email, password, pin } = req.body;
             const result = await this.usecases.userUsecase.register({
@@ -13,41 +13,32 @@ class UserHandler {
                 password,
                 pin,
             });
-            res.status(201).json({ data: result, code: 201 });
-        } catch (err) {
-            res.status(500).json({
-                error: err,
-                code: 500,
-            });
+            return res.status(result.code).json(result.send());
+        } catch (error) {
+            next(error);
         }
     };
 
-    login = async (req, res) => {
+    login = async (req, res, next) => {
         try {
             let { email, password } = req.body;
             const result = await this.usecases.userUsecase.login({
                 email,
                 password,
             });
-            res.status(200).json({ data: result, code: 200 });
+            return res.status(200).json({ data: result, code: 200 });
         } catch (error) {
-            res.status(500).json({
-                error: error,
-                code: 500,
-            });
+            next(error);
         }
     };
 
-    getDetail = async (req, res) => {
+    getDetail = async (req, res, next) => {
         try {
             let user = req.userData;
             const result = await this.usecases.userUsecase.getDetail(user);
-            res.status(200).json({ message: result, code: 200 });
+            return res.status(200).json({ message: result, code: 200 });
         } catch (error) {
-            res.status(500).json({
-                error: error,
-                code: 500,
-            });
+            next(error);
         }
     };
 }

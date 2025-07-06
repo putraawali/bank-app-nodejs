@@ -32,6 +32,10 @@ class AccountRepository {
             where["user_id"] = conditions.user_id;
         }
 
+        if (conditions.account_number) {
+            where["account_number"] = conditions.account_number;
+        }
+
         return this.#accountModel.findOne({ where });
     }
 }
