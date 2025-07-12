@@ -24,14 +24,19 @@ class Middleware {
                 const jwt = new JWT();
 
                 const userData = jwt.verify(token);
-                console.log(userData);
                 req.userData = userData;
                 return next();
             }
 
-            return next();
+            next(
+                new Response({
+                    code: 401,
+                    error: "Please login first",
+                    detail: "Request doesn't contains authorization",
+                })
+            );
         } catch (error) {
-            throw error;
+            next(error);
         }
     }
 
