@@ -73,21 +73,7 @@ class UserUsecase {
 
             return new Response({ code: 201 });
         } catch (error) {
-            if (error instanceof Response) {
-                next(error);
-            }
-
-            let msg = "Internal server error";
-            let detail = error;
-            let code = 500;
-
-            if (error.startsWith("Validation error: ")) {
-                msg = error.split("Validation error: ")[1];
-                code = 400;
-            }
-
-            const response = new Response({ code, error: msg, detail });
-            next(response);
+            throw error;
         }
     }
 
@@ -124,15 +110,7 @@ class UserUsecase {
                 },
             });
         } catch (error) {
-            if (error instanceof Response) {
-                throw error;
-            }
-
-            let msg = "Internal server error";
-            let detail = error;
-            let code = 500;
-
-            throw new Response({ code, error: msg, detail });
+            throw error;
         }
     }
 
@@ -170,7 +148,7 @@ class UserUsecase {
                 },
             });
         } catch (error) {
-            next(error);
+            throw error;
         }
     }
 }
