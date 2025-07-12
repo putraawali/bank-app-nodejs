@@ -59,6 +59,7 @@ BANK-APP-NODEJS/
 | ------ | ------------------- | --------------------------- |
 | POST   | `/user/register`    | Register new user + account |
 | POST   | `/user/login`       | Authenticate user           |
+| GET    | `/user`             | User user detail            |
 | POST   | `/account/deposit`  | Deposit to account          |
 | POST   | `/account/withdraw` | Withdraw from account       |
 | POST   | `/account/transfer` | Transfer to other account   |

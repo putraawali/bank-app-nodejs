@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { Response } = require("../utils/response");
+const Decimal = require("decimal.js");
 
 class AccountRepository {
     #accountModel;
@@ -44,24 +45,6 @@ class AccountRepository {
         });
     }
 
-    async update(data) {
-        if (!data.account_id) {
-            throw new Response({
-                code: 400,
-                detail: "Invalid data account id",
-                error: "Failed to update account",
-            });
-        }
-
-        return this.#accountModel.update(
-            { ...data },
-            {
-                where: { account_id: data.account_id },
-                transaction: this.#transaction,
-            }
-        );
-    }
-
     async deposit({ account_id, amount }) {
         if (typeof amount !== "number" || isNaN(amount) || amount <= 0) {
             throw new Response({
@@ -79,10 +62,46 @@ class AccountRepository {
             });
         }
 
+        const safeAmount = new Decimal(amount);
+
         return this.#accountModel.increment(
-            { balance: amount },
+            { balance: safeAmount.toNumber() },
             { where: { account_id }, transaction: this.#transaction }
         );
+    }
+
+    async withdraw({ account_id, amount }) {
+        try {
+            if (typeof amount !== "number" || isNaN(amount) || amount <= 0) {
+                throw new Response({
+                    code: 400,
+                    error: "Invalid amount",
+                    detail: "Deposit amount must be a valid number less than 0",
+                });
+            }
+
+            if (!account_id) {
+                throw new Response({
+                    code: 400,
+                    detail: "Invalid data account id",
+                    error: "Deposit failed",
+                });
+            }
+
+            const safeAmount = new Decimal(amount).negated();
+
+            await this.#accountModel.increment(
+                { balance: safeAmount.toNumber() },
+                { where: { account_id }, transaction: this.#transaction }
+            );
+            return;
+        } catch (_) {
+            throw new Response({
+                code: 400,
+                error: "Insufficient Balance",
+                detail: "Customer's balance is not enough",
+            });
+        }
     }
 }
 

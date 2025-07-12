@@ -1,14 +1,5 @@
-const { DataTypes, Sequelize } = require("sequelize");
-const { db } = require("../connections/pg");
+const { DataTypes } = require("sequelize");
 const { Bcrypt } = require("../utils/bcrypt");
-
-// db.define("Asd", {
-//     user_id: {
-//         references: {
-
-//         }
-//     }
-// })
 
 module.exports = (sequelize) => {
     const Account = sequelize.define(

@@ -14,6 +14,8 @@ class AccountRouter {
 
     registerRouter() {
         this.#router.post("/deposit", this.accountHandler.deposit);
+        this.#router.post("/withdraw", this.accountHandler.withdraw);
+        this.#router.post("/transfer", this.accountHandler.transfer);
     }
 
     getRouter() {

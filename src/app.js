@@ -3,7 +3,6 @@ const { Repository } = require("./repositories");
 const { Usecase } = require("./usecases");
 const { UserRouter } = require("./router/user_router");
 const { Middleware } = require("./middlewares/middleware");
-const { Response } = require("./utils/response");
 const { AccountRouter } = require("./router/account_router");
 
 class App {

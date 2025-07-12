@@ -9,8 +9,6 @@ const PORT = process.env.APP_PORT || 3000;
         await db.authenticate();
         console.log("Postgres Connected Successfully");
 
-        // const { app } = createApp({ db });
-
         const apps = new App({ db });
         const app = apps.getApp();
 

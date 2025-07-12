@@ -1,7 +1,6 @@
 const { JWT } = require("../utils/jwt");
 const { Response } = require("../utils/response");
 const { v4: uuidv4 } = require("uuid");
-// const { logger } = require("./utils/logger");
 const { logger } = require("../utils/logger");
 
 class Middleware {
