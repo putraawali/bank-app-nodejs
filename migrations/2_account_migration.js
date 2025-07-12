@@ -38,6 +38,17 @@ module.exports = {
                 allowNull: true,
             },
         });
+
+        await queryInterface.addConstraint("accounts", {
+            fields: ["balance"],
+            type: "check",
+            name: "check_balance_non_negative",
+            where: {
+                balance: {
+                    [Sequelize.Op.gte]: 0,
+                },
+            },
+        });
     },
 
     down: async (queryInterface) => {

@@ -4,6 +4,7 @@ const { Usecase } = require("./usecases");
 const { UserRouter } = require("./router/user_router");
 const { Middleware } = require("./middlewares/middleware");
 const { Response } = require("./utils/response");
+const { AccountRouter } = require("./router/account_router");
 
 class App {
     #app;
@@ -21,13 +22,23 @@ class App {
             }),
         });
 
+        const accountRouter = new AccountRouter({
+            usecases: new Usecase({
+                repository: new Repository({ db }),
+            }),
+        });
+
         app.use(Middleware.validateXRequestId);
         app.use(Middleware.validateContentType);
         app.use(Middleware.logRequest);
         app.use(Middleware.logResponse);
 
         app.use("/user", Middleware.authentication, userRouter.getRouter());
-
+        app.use(
+            "/account",
+            Middleware.authentication,
+            accountRouter.getRouter()
+        );
         // Error handler
         app.use(Middleware.errorHandler);
 

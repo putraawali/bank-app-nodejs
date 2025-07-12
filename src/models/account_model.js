@@ -31,21 +31,6 @@ module.exports = (sequelize) => {
             pin: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                validate: {
-                    validatePin: (pin) => {
-                        if (pin.length !== 6) {
-                            throw new Error(
-                                "PIN should be minimum 6 characters and numeric"
-                            );
-                        }
-
-                        for (let i = 0; i < pin.length; i++) {
-                            if (isNaN(+pin[i])) {
-                                throw new Error("PIN Should be number");
-                            }
-                        }
-                    },
-                },
             },
             balance: {
                 type: DataTypes.DECIMAL(18, 2),
@@ -68,6 +53,18 @@ module.exports = (sequelize) => {
             deletedAt: false,
             hooks: {
                 beforeCreate: (account) => {
+                    if (account.pin.length !== 6) {
+                        throw new Error(
+                            "PIN should be minimum 6 characters and numeric"
+                        );
+                    }
+
+                    for (let i = 0; i < account.pin.length; i++) {
+                        if (isNaN(+account.pin[i])) {
+                            throw new Error("PIN Should be number");
+                        }
+                    }
+
                     account.pin = Bcrypt.hash(account.pin);
                 },
             },

@@ -9,6 +9,12 @@ class TransactionRepository {
     setTransaction(t) {
         this.#transaction = t;
     }
+
+    async create(data) {
+        return this.#transactionModel.create(data, {
+            transaction: this.#transaction,
+        });
+    }
 }
 
 module.exports = { TransactionRepository };

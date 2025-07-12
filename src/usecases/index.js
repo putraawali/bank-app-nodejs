@@ -1,3 +1,4 @@
+const { AccountUsecase } = require("./account_usecase");
 const { UserUsecase } = require("./user_usecase");
 
 class Usecase {
@@ -7,6 +8,7 @@ class Usecase {
 
     constructor({ repository }) {
         this.userUsecase = new UserUsecase({ repository });
+        this.accountUsecase = new AccountUsecase({ repository });
     }
 }
 

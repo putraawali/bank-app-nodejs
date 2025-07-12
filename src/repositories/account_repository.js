@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const { Response } = require("../utils/response");
 
 class AccountRepository {
     #accountModel;
@@ -36,7 +37,52 @@ class AccountRepository {
             where["account_number"] = conditions.account_number;
         }
 
-        return this.#accountModel.findOne({ where });
+        return this.#accountModel.findOne({
+            where,
+            transaction: this.#transaction,
+            lock: conditions.lock,
+        });
+    }
+
+    async update(data) {
+        if (!data.account_id) {
+            throw new Response({
+                code: 400,
+                detail: "Invalid data account id",
+                error: "Failed to update account",
+            });
+        }
+
+        return this.#accountModel.update(
+            { ...data },
+            {
+                where: { account_id: data.account_id },
+                transaction: this.#transaction,
+            }
+        );
+    }
+
+    async deposit({ account_id, amount }) {
+        if (typeof amount !== "number" || isNaN(amount) || amount <= 0) {
+            throw new Response({
+                code: 400,
+                error: "Invalid amount",
+                detail: "Deposit amount must be a valid number greater than 0",
+            });
+        }
+
+        if (!account_id) {
+            throw new Response({
+                code: 400,
+                detail: "Invalid data account id",
+                error: "Deposit failed",
+            });
+        }
+
+        return this.#accountModel.increment(
+            { balance: amount },
+            { where: { account_id }, transaction: this.#transaction }
+        );
     }
 }
 

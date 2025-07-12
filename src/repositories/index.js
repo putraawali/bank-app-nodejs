@@ -51,13 +51,12 @@ class Repository {
         };
 
         try {
-            const result = await fn(tempRepo);
+            const result = await fn(tempRepo, tx);
             await tx.commit();
             return result;
         } catch (error) {
             await tx.rollback();
-            console.log(error.message);
-            throw error.message;
+            throw error;
         }
     }
 
