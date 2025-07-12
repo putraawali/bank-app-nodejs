@@ -86,7 +86,7 @@ class Middleware {
 
     static logResponse(req, res, next) {
         const start = Date.now();
-        const originalSend = res.json;
+        const originalJson = res.json.bind(res);
 
         res.json = (body) => {
             const duration = Date.now() - start;
@@ -113,13 +113,13 @@ class Middleware {
                 logger.info(content);
             }
 
-            return originalSend.call(this, body);
+            return originalJson(body);
         };
 
         next();
     }
 
-    static errorHandler(err, _, res, _) {
+    static errorHandler(err, _, res, __) {
         if (err instanceof Response) {
             return res.status(err.code).json(err.send());
         }

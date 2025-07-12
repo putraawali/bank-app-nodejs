@@ -26,7 +26,7 @@ class UserHandler {
                 email,
                 password,
             });
-            return res.status(200).json({ data: result, code: 200 });
+            return res.status(200).json(result.send());
         } catch (error) {
             next(error);
         }
@@ -36,7 +36,7 @@ class UserHandler {
         try {
             let user = req.userData;
             const result = await this.usecases.userUsecase.getDetail(user);
-            return res.status(200).json({ message: result, code: 200 });
+            return res.status(200).json(result.send());
         } catch (error) {
             next(error);
         }
